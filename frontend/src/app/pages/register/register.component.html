@@ -1,0 +1,54 @@
+<div class="w3-col l4 m8 w3-container w3-display-topmiddle">
+    <form #f="ngForm" (ngSubmit)="onSubmit(f)"
+        class="w3-container w3-card-4 w3-light-grey w3-text-blue w3-margin w3-round-large"
+        [ngClass]="{'w3-opacity-max w3-disabled' : this.smsSent}">
+        <div class="w3-row w3-section">
+            <div class="w3-col" style="width:50px"><i class="w3-xxlarge fa fa-user"></i></div>
+            <div class="w3-rest">
+                <input class="w3-input w3-border" name="name" type="text" placeholder="Name" required ngModel>
+            </div>
+        </div>
+
+        <div class="w3-row w3-section">
+            <div class="w3-col" style="width:50px"><i class="w3-xxlarge fa fa-envelope-o"></i></div>
+            <div class="w3-rest">
+                <input class="w3-input w3-border" name="email" type="text" placeholder="Email" ngModel>
+            </div>
+        </div>
+
+        <div class="w3-row w3-section">
+            <div class="w3-col" style="width:50px"><i class="w3-xxlarge fa fa-mobile"></i></div>
+            <div class="w3-rest">
+                <input class="w3-input w3-border" name="cell" type="tel" placeholder="Cell, 312-555-1212 or 3125551212"
+                    required pattern="[0-9]{3}[0-9]{3}[0-9]{4}|[0-9]{3}-[0-9]{3}-[0-9]{4}"
+                    oninvalid="document.getElementById('phoneFormat').style.display='inline';" ngModel>
+                <span id="phoneFormat" style="display:none;"><em>Format: 312-555-1212 or 3125551212</em></span>
+            </div>
+        </div>
+
+        <div class="w3-row w3-section">
+            <div class="w3-col" style="width:50px"><i class="w3-xxlarge fa fa-user"></i></div>
+            <div class="w3-rest w3-tooltip">
+                <input class="w3-input w3-border" name="reference" type="text" placeholder="Reference" ngModel>
+                <span class="w3-text"><em>Required if you don't personally know a host</em></span>
+            </div>
+        </div>
+
+        <button type="submit" class="w3-button w3-block w3-section w3-blue w3-ripple w3-padding">Send SMS
+            Verification</button>
+    </form>
+</div>
+
+<div class="w3-col l2 m8 w3-container w3-display-topmiddle w3-hide" [ngClass]="{'w3-show' : this.smsSent}">
+    <form id="validationForm" #cf="ngForm" (ngSubmit)="cfSubmit(cf,$event)"
+        class="w3-container w3-card-4 w3-light-grey w3-text-blue w3-margin w3-round-large">
+        <div class="w3-row w3-section">
+            <div class="w3-col" style="width:50px"><i class="w3-xxlarge fa fa-mobile"></i></div>
+            <div class="w3-rest">
+                <input class="w3-input w3-border" name="code" type="text" maxlength=6 placeholder="Verification Code"
+                    required ngModel>
+            </div>
+        </div>
+        <button type="submit" class="w3-button w3-block w3-section w3-blue w3-ripple w3-padding">Verify</button>
+    </form>
+</div>
