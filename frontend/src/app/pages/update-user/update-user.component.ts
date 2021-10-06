@@ -26,7 +26,10 @@ export class UpdateUserComponent implements OnInit {
   ngOnInit(): void {
     this.updateUserDiv = this.el.nativeElement.querySelector("#updateUser");
     this.uploadAvatarInput = this.el.nativeElement.querySelector("#avatarUpload");
-    this.getUser("6155c3b11e992589e42fdd7d");
+    let userId=localStorage.getItem("userId");
+    if (userId) {
+      this.getUser(userId);
+    }
   }
 
   onSubmit(f: NgForm) {

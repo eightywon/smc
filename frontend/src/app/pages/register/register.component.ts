@@ -3,6 +3,7 @@ import { UserService } from 'src/app/user.service';
 import User from '../../models/users';
 import { NgForm } from '@angular/forms';
 import { HttpClient } from "@angular/common/http";
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-register',
@@ -11,43 +12,62 @@ import { HttpClient } from "@angular/common/http";
 })
 
 export class RegisterComponent implements OnInit {
-  validationForm: HTMLElement;
+  cf: HTMLElement;
+  f: HTMLElement
   readonly ROOT_URL;
-  smsSent: boolean=false;
-  showVerification: boolean=false;
-  dim: boolean=false;
-  min: number=111111;
-  max: number=999999;
-  regCode: number=0;
+  smsSent: boolean = false;
+  showVerification: boolean = false;
+  dim: boolean = false;
+  min: number = 111111;
+  max: number = 999999;
+  regCode: number = 0;
+  inputCode: string = "";
+  badCell: boolean = false;
+  cellMessage: string = "";
+  model: User = new User();
+  user: User = new User();
 
   constructor(
     private userService: UserService,
     private http: HttpClient,
-    private el: ElementRef
+    private el: ElementRef,
+    private _router: Router
   ) {
     this.ROOT_URL = "https://smokingmonkey.club:3978";
   }
 
   ngOnInit(): void {
-    this.validationForm = this.el.nativeElement.querySelector("#validationForm");
-    console.log(this.validationForm);
-    console.log(this.validationForm);
+    this.cf = this.el.nativeElement.querySelector("#cf");
+    this.f = this.el.nativeElement.querySelector("#f");
+    console.log(this.user);
   }
 
   cfSubmit(cf: NgForm, e: Event) {
-    console.log(cf.value);
-    if (cf.value.code==this.regCode) {
-      console.log("we fuckin did it");
-      window.location.href = '/wall';
-    } else{
+    if (cf.value.code == this.regCode) {
+      console.log("matched! user: ", this.user);
+      this.user.displayName = this.user.realName;
+      this.user.verificationCode = String(this.regCode);
+      this.userService.addUser(this.user)
+        .subscribe(res => {
+          console.log(res);
+          localStorage.setItem("token", res.token);
+          localStorage.setItem("userId", res.userId)
+          this._router.navigate(["/wall"]);
+        });
+        //catch error here
+    } else {
       e.preventDefault();
-      this.validationForm.classList.add('animated');
-      this.validationForm.classList.add('shake');
+
+      const code = this.el.nativeElement.querySelector("#code");
+      code.focus();
+      code.select();
+
+      this.cf.classList.add('animated');
+      this.cf.classList.add('shake');
       setTimeout(() => {
-        this.validationForm.classList.remove('animated');
-        this.validationForm.classList.remove('shake');
-     }, 500);
-      console.log("poop");
+        this.cf.classList.remove('animated');
+        this.cf.classList.remove('shake');
+      }, 500);
     }
   }
 
@@ -55,26 +75,40 @@ export class RegisterComponent implements OnInit {
     interface res {
       sid: String;
       status: String;
+      error: String;
     }
 
-    this.smsSent=true;
+    this.userService.getUserByCell(f.value.cell)
+      .subscribe((user) => {
+        this.badCell = false;
+        this.cellMessage = "";
+        if (user.length == 0) {
+          this.min = Math.ceil(this.min);
+          this.max = Math.floor(this.max);
+          this.regCode = Math.floor(Math.random() * (this.max - this.min + 1)) + this.min;
+          f.value.message = `Your SMC verification code is ${this.regCode}`;
 
-    this.min = Math.ceil(this.min);
-    this.max = Math.floor(this.max);
-    this.regCode = Math.floor(Math.random() * (this.max - this.min + 1)) + this.min;
+          this.http.post<res>(`${this.ROOT_URL}/regsms`, f.value)
+            .subscribe(res => {
 
-    console.log(f.value);
-    f.value.message = `Your SMC verification code is ${this.regCode}`;
-    this.http.post<res>(`${this.ROOT_URL}/regsms`, f.value)
-      .subscribe(res => {
-        
-        if (res.status == "201") {
-          this.smsSent=true;
+              if (res.status == "201") {
+                this.smsSent = true;
+                console.log("new user: ", f.value);
+                this.user = f.value;
+              } else {
+                this.cellMessage = JSON.stringify(res.error);
+                this.smsSent = false;
+                this.badCell = true;
+              }
+              this.showVerification = true;
+            });
         } else {
-          this.smsSent=false;
+          this.cellMessage = "A user with that cell already exists";
+          this.badCell = true;
+          const cell = this.el.nativeElement.querySelector("#cell");
+          cell.focus();
+          cell.select();
         }
-        this.showVerification=true;
-        console.log(res)
       });
   }
 }

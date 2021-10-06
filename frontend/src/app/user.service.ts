@@ -1,7 +1,11 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from "@angular/common/http" 
-
 import User from "./models/users"
+
+interface JSONWebToken {
+  token: string;
+  userId: string;
+}
 
 @Injectable({
   providedIn: 'root'
@@ -22,6 +26,22 @@ export class UserService {
     return this.http.get<User[]>(`${this.ROOT_URL}/users/${id}`);
    }
 
+  getUserByCell(cell: string) {
+    return this.http.get<User[]>(`${this.ROOT_URL}/userByCell/${cell}`);
+  }
+
+  addUser(user: User) {
+    return this.http.post<JSONWebToken>(`${this.ROOT_URL}/addUser`,user)
+  }
+
+  //is the user logged in (JWT exists in local storage)?
+  loggedIn() {
+    return !!localStorage.getItem("token");
+  }
+
+  getToken() {
+    return localStorage.getItem("token");
+  }
   /*
   createPost(postText: string, postedByUserId: string) {
    return this.webService.post(lists,{})

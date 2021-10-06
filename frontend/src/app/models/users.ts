@@ -6,4 +6,5 @@ export default class User {
  verificationCode: string;
  _id: string;
  avatar: string;
+ reference: string;
 }

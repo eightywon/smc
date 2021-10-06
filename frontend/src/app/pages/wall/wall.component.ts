@@ -2,6 +2,8 @@ import { Component, ElementRef, Input, OnInit, ViewChild } from '@angular/core';
 import Post from "../../models/posts";
 import { PostService } from "../../post.service";
 import * as moment from 'moment';
+import { HttpErrorResponse } from '@angular/common/http';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-wall',
@@ -20,15 +22,24 @@ export class WallComponent implements OnInit {
 
   avatar = "https://smokingmonkey.club/assets/avatars/6155c3b11e992589e42fdd7d/avatar.png";
 
-  constructor(private postService: PostService, private el: ElementRef) { }
+  constructor(private postService: PostService, private el: ElementRef, private router: Router) { }
 
 
   ngOnInit() {
     this.updateUserDiv = this.el.nativeElement.querySelector("#updateUser");
     this.postService.getPosts()
-      .subscribe((posts) => {
+      .subscribe(
+        posts => {
         console.log("posts:", posts);
         this.posts = posts;
+      },
+      err=> {
+        console.log("error getting posts");
+        if (err instanceof HttpErrorResponse) {
+          if (err.status===401) {
+            this.router.navigate(["/"]);
+          }
+        }
       });
   }
 
@@ -39,11 +50,14 @@ export class WallComponent implements OnInit {
       postFld.innerHTML = "";
     }
     console.log(postText);
-    this.postService.addPost(postText, "6155c3b11e992589e42fdd7d")
-      .subscribe((posts) => {
-        this.posts = posts;
-      });
-    //.catch((error)=>console.log(error));
+    let userId = localStorage.getItem("userId");
+    if (userId) {
+      this.postService.addPost(postText, userId)
+        .subscribe((posts) => {
+          this.posts = posts;
+        });
+      //.catch((error)=>console.log(error));
+    }
   }
 
   public deletePost(id: string) {
