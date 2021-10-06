@@ -42,6 +42,11 @@ export class UserService {
   getToken() {
     return localStorage.getItem("token");
   }
+
+  login(id: string) {
+    return this.http.get<JSONWebToken>(`${this.ROOT_URL}/login/${id}`)
+  }
+
   /*
   createPost(postText: string, postedByUserId: string) {
    return this.webService.post(lists,{})

@@ -1,5 +1,5 @@
 import { Component, ElementRef, OnInit } from '@angular/core';
-import { UserService } from 'src/app/user.service';
+import { UserService } from '../../user.service';
 import User from '../../models/users';
 import { NgForm } from '@angular/forms';
 import { HttpClient } from "@angular/common/http";

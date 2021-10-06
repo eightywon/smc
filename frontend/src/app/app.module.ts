@@ -10,6 +10,7 @@ import { IndexComponent } from './pages/index/index.component';
 import { UpdateUserComponent } from './pages/update-user/update-user.component';
 import { AuthGuard } from './auth.guard';
 import { TokenInterceptorService} from './token-interceptor.service';
+import { LoginComponent } from './pages/login/login.component';
 
 @NgModule({
   declarations: [
@@ -18,6 +19,7 @@ import { TokenInterceptorService} from './token-interceptor.service';
     RegisterComponent,
     IndexComponent,
     UpdateUserComponent,
+    LoginComponent,
   ],
   imports: [
     BrowserModule,

@@ -1,5 +1,5 @@
 config_data = require("./config.json");
-const mongoose=require("./database/mongoose");
+const mongoose = require("./database/mongoose");
 const express = require("express");
 const User = require("./database/models/users");
 const Post = require("./database/models/posts");
@@ -90,6 +90,15 @@ app.delete("/users/:_id", (req, res) => {
   User.findOneAndDelete({ "_id": req.params._id })
     .then(user => res.send(user))
     .catch((error) => console.log(error));
+});
+
+app.get("/login/:_id", (req, res) => {
+  console.log("login generating jwt", req.params);
+  //generate JWT 
+  let payload = { subject: req.params._id };
+  let token = jwt.sign(payload, config_data.jwt_key);
+  //console.log({token});
+  res.status(200).send({ token, userId: req.params._id });
 });
 
 //posts by specific user
