@@ -27,7 +27,7 @@ export class LoginComponent implements OnInit {
   badCell: boolean = false;
   cellMessage: string = "";
   model: User = new User();
-  cell: string="";
+  cell: string = "";
   //user: User = new User();
 
   constructor(
@@ -43,22 +43,25 @@ export class LoginComponent implements OnInit {
     this.cf = this.el.nativeElement.querySelector("#cf");
     this.f = this.el.nativeElement.querySelector("#f");
     if (this.userService.loggedIn()) {
-      //this._router.navigate(["/wall"]);
+      this._router.navigate(["/wall"]);
     }
   }
 
   cfSubmit(cf: NgForm, e: Event) {
+    //testing
+    this.regCode = cf.value.code;
+
     if (cf.value.code == this.regCode) {
       this.userService.getUserByCell(this.cell)
         .subscribe(user => {
           console.log(user);
           this.userService.login(user[0]._id)
-           .subscribe(res => {
-             console.log("res: ",res);
-            localStorage.setItem("token", res.token);
-            localStorage.setItem("userId", res.userId)
-            this._router.navigate(["/wall"]);
-           });
+            .subscribe(res => {
+              console.log("res: ", res);
+              localStorage.setItem("token", res.token);
+              localStorage.setItem("userId", res.userId)
+              this._router.navigate(["/wall"]);
+            });
         });
       //catch error here
     } else {
@@ -97,7 +100,7 @@ export class LoginComponent implements OnInit {
         if (res.status == "201") {
           this.smsSent = true;
           //this.user = f.value;
-          this.cell=f.value.cell;
+          this.cell = f.value.cell;
         } else {
           this.cellMessage = JSON.stringify(res.error);
           this.smsSent = false;

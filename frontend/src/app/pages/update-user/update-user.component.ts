@@ -13,13 +13,12 @@ export class UpdateUserComponent implements OnInit {
 
   fileName = "";
 
-  user: User[];
+  user: User;
   @ViewChild("updateUser") div: ElementRef;
   @ViewChild("avatarUpload") input: ElementRef;
   @Input() updateUser: boolean = false;
   updateUserDiv: HTMLElement;
   uploadAvatarInput: HTMLElement;
-  avatar = "https://smokingmonkey.club/assets/avatars/6155c3b11e992589e42fdd7d/avatar.png";
 
   constructor(private el: ElementRef, private userService: UserService, http: HttpClient) { }
 

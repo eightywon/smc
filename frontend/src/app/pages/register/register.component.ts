@@ -39,10 +39,15 @@ export class RegisterComponent implements OnInit {
   ngOnInit(): void {
     this.cf = this.el.nativeElement.querySelector("#cf");
     this.f = this.el.nativeElement.querySelector("#f");
-    console.log(this.user);
+    if (this.userService.loggedIn()) {
+      this._router.navigate(["/wall"]);
+    }
   }
 
   cfSubmit(cf: NgForm, e: Event) {
+    //testing
+    this.regCode=cf.value.code;
+
     if (cf.value.code == this.regCode) {
       console.log("matched! user: ", this.user);
       this.user.displayName = this.user.realName;
@@ -88,6 +93,8 @@ export class RegisterComponent implements OnInit {
           this.regCode = Math.floor(Math.random() * (this.max - this.min + 1)) + this.min;
           f.value.message = `Your SMC verification code is ${this.regCode}`;
 
+          //testing
+          /*
           this.http.post<res>(`${this.ROOT_URL}/regsms`, f.value)
             .subscribe(res => {
 
@@ -102,6 +109,10 @@ export class RegisterComponent implements OnInit {
               }
               this.showVerification = true;
             });
+          */
+            this.user = f.value;
+            this.smsSent=true;
+            this.showVerification=true;
         } else {
           this.cellMessage = "A user with that cell already exists";
           this.badCell = true;

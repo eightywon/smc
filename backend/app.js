@@ -62,7 +62,21 @@ app.post("/addUser", (req, res) => {
       //generate JWT 
       let payload = { subject: user._id };
       let token = jwt.sign(payload, config_data.jwt_key);
-      //console.log({token});
+      
+      const newDir=`/root/smc/frontend/src/assets/avatars/${user._id}`
+      try {
+        if (!fs.existsSync(newDir)) {
+          fs.mkdirSync(newDir);
+        }
+
+        fs.copyFile("/root/smc/frontend/src/assets/smc_head.png",`${newDir}/avatar.png`, (err) => {
+          if (err) throw err;
+          console.log("copied avatar");
+        });
+      } catch (err) {
+        console.log(err);
+      }
+
       res.status(200).send({ token, userId: user._id });
     })
     .catch((error) => console.log(error));
@@ -70,7 +84,10 @@ app.post("/addUser", (req, res) => {
 
 app.get("/users/:_id", (req, res) => {
   User.find({ _id: req.params._id })
-    .then(user => res.send(user))
+    .then(user => {
+      console.log(user);
+      res.send(user[0])
+    })
     .catch((error) => console.log(error));
 });
 

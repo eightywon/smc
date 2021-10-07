@@ -8,12 +8,11 @@
       <div class="w3-card w3-round w3-white">
         <div class="w3-container w3-display-container">
          <span class="w3-display-bottomright w3-padding"><i class="fa fa-gear" (click)="showUpdateUser()" onmouseover="" style="cursor: pointer;"></i></span>     
-         <p class="w3-center"><img src="{{ avatar }}" style="height:106px;width:106px"></p>
-         <p class="w3-center">sign out</p>
+         <p class="w3-center"><img src="assets/avatars/{{ this.user && this.user._id }}/avatar.png" style="height:106px;width:106px"></p>
+         <p class="w3-center"><span class="" (click)="signOut();" onmouseover="" style="cursor: pointer;"><u>sign out</u></span></p>
          <hr>
-         <p><i class="fa fa-pencil fa-fw w3-margin-right w3-text-theme"></i> Designer, UI</p>
-         <p><i class="fa fa-home fa-fw w3-margin-right w3-text-theme"></i> London, UK</p>
-         <p><i class="fa fa-birthday-cake fa-fw w3-margin-right w3-text-theme"></i> April 1, 1988</p>
+         <p><i class="fa fa-user fa-fw w3-text-theme"></i> {{ this.user && this.user.displayName }}</p>
+         <p><i class="fa fa-mobile fa-fw w3-text-theme"></i> {{ this.user && this.user.cell }}</p>
         </div>
       </div>
       <br>
@@ -55,7 +54,7 @@
       </div>
 
       <div class="w3-container w3-display-container w3-card w3-white w3-round w3-margin" *ngFor="let post of posts && posts.reverse()"><br>
-        <img src="{{ avatar }}" class="w3-left w3-circle w3-margin-right" style="width:60px">
+        <img src="assets/avatars/{{ post.users[0]._id }}/avatar.png" class="w3-left w3-circle w3-margin-right" style="width:60px">
         <span class="w3-button w3-display-topright" (click)="deletePost(post._id)"><i class="fa fa-remove"></i></span>
         <h6>{{ post.users[0]['displayName'] }} said...</h6><br>
         <span>{{ moment(post.postDate).fromNow() }}</span>

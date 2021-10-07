@@ -4,6 +4,8 @@ import { PostService } from "../../post.service";
 import * as moment from 'moment';
 import { HttpErrorResponse } from '@angular/common/http';
 import { Router } from '@angular/router';
+import User from "../../models/users";
+import { UserService } from 'src/app/user.service';
 
 @Component({
   selector: 'app-wall',
@@ -16,16 +18,26 @@ export class WallComponent implements OnInit {
   @ViewChild("updateUser") div: ElementRef;
 
   posts: Post[];
+  user: User;
   moment: any = moment;
   @Input() updateUser: boolean = false;
   updateUserDiv: HTMLElement;
 
-  avatar = "https://smokingmonkey.club/assets/avatars/6155c3b11e992589e42fdd7d/avatar.png";
-
-  constructor(private postService: PostService, private el: ElementRef, private router: Router) { }
+  constructor(private postService: PostService, 
+              private el: ElementRef, 
+              private router: Router,
+              private userService: UserService) { }
 
 
   ngOnInit() {
+    const userId=localStorage.getItem("userId");
+    if (userId) {
+      this.userService.getUser(userId)
+      .subscribe(user=> {
+        this.user=user
+        console.log("wall init user: ",this.user);
+      });
+    }
     this.updateUserDiv = this.el.nativeElement.querySelector("#updateUser");
     this.postService.getPosts()
       .subscribe(
@@ -70,5 +82,11 @@ export class WallComponent implements OnInit {
   showUpdateUser() {
     this.updateUserDiv.classList.add("w3-show");
     this.updateUserDiv.classList.remove("w3-hide");
+  }
+
+  signOut() {
+    localStorage.removeItem("token");
+    localStorage.removeItem("userId");
+    this.router.navigate(["/"]);
   }
 }
