@@ -22,6 +22,7 @@ export class WallComponent implements OnInit {
   moment: any = moment;
   @Input() updateUser: boolean = false;
   updateUserDiv: HTMLElement;
+  displayName: string;
 
   constructor(private postService: PostService, 
               private el: ElementRef, 
@@ -30,14 +31,6 @@ export class WallComponent implements OnInit {
 
 
   ngOnInit() {
-    const userId=localStorage.getItem("userId");
-    if (userId) {
-      this.userService.getUser(userId)
-      .subscribe(user=> {
-        this.user=user
-        console.log("wall init user: ",this.user);
-      });
-    }
     this.updateUserDiv = this.el.nativeElement.querySelector("#updateUser");
     this.postService.getPosts()
       .subscribe(
@@ -53,13 +46,25 @@ export class WallComponent implements OnInit {
           }
         }
       });
+      const userId=localStorage.getItem("userId");
+      if (userId) {
+        this.userService.getUser(userId)
+        .subscribe(user=> {
+          this.user=user;
+          console.log("wall init user: ",this.user);
+          if (this.user.realName!=this.user.displayName) {
+            this.displayName=`(${this.user.displayName})`;
+          }
+        });
+      }
   }
 
   public post() {
-    var postFld = document.getElementById("newPost"), postText = "";
+    const postFld = (<HTMLInputElement>document.getElementById("newPost"));
+    const postText=postFld.value;
+    console.log(postFld);
     if (postFld) {
-      var postText = postFld.innerHTML;
-      postFld.innerHTML = "";
+      postFld.value = "";
     }
     console.log(postText);
     let userId = localStorage.getItem("userId");

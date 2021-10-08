@@ -47,10 +47,7 @@ export class UserService {
     return this.http.get<JSONWebToken>(`${this.ROOT_URL}/login/${id}`)
   }
 
-  /*
-  createPost(postText: string, postedByUserId: string) {
-   return this.webService.post(lists,{})
+  updateUser(user: User) {
+    return this.http.patch<User>(`${this.ROOT_URL}/users/${user._id}`,user)
   }
-  */
-
 }

@@ -1,2 +1,3 @@
 *.crt
 *.key
+/src/assets/avatars/*

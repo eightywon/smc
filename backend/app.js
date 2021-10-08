@@ -12,8 +12,12 @@ const cert = fs.readFileSync("../frontend/smokingmonkey.club.crt");
 const sslCreds = { key: key, cert: cert };
 const httpsServer = https.createServer(sslCreds, app);
 const jwt = require('jsonwebtoken');
+const multer = require('multer');
+const path = require('path');
 
 app.use(express.json());
+
+//set headers for CORS support
 app.use((req, res, next) => {
   res.header("Access-Control-Allow-Origin", "*");
   res.header("Access-Control-Allow-Methods", "GET,POST,HEAD,OPTIONS,PUT,PATCH,DELETE");
@@ -21,14 +25,13 @@ app.use((req, res, next) => {
   next();
 });
 
-app.post("/regsms", function (req, res, next) {
+app.post("/regsms", function (req, res) {
   twilio.messages.create({
     body: req.body.message,
     from: '+12107746873',
     to: '1' + req.body.cell
   })
     .then(message => {
-      console.log(message.sid)
       res.setHeader('Content-Type', 'application/json');
       res.statusCode = 201;
       res.send(JSON.stringify({ sid: message.sid, status: res.statusCode }));
@@ -49,6 +52,29 @@ app.get("/users", (req, res) => {
     .catch((error) => console.log(error));
 });
 
+app.post("/updateAvatar", (req, res) => {
+  const newDir = `/root/smc/frontend/src/assets/avatars/${req.body._id}`;
+  try {
+    if (!fs.existsSync(newDir)) {
+      fs.mkdirSync(newDir);
+    }
+
+    fs.copyFile(`/root/smc/frontend/src/assets/avatars/${req.body.newAvatarLoc}`, `${newDir}/avatar.png`, (err) => {
+      if (err) throw err;
+
+      fs.unlink(`/root/smc/frontend/src/assets/avatars/${req.body.newAvatarLoc}`, (err) => {
+        if (err) throw err;
+      });
+
+      res.setHeader('Content-Type', 'application/json');
+      res.statusCode = 200;
+      res.send(JSON.stringify({ result: `success` }));
+    });
+  } catch (err) {
+    console.log(err);
+  }
+});
+
 app.post("/addUser", (req, res) => {
   (new User({
     'realName': req.body.realName,
@@ -62,14 +88,14 @@ app.post("/addUser", (req, res) => {
       //generate JWT 
       let payload = { subject: user._id };
       let token = jwt.sign(payload, config_data.jwt_key);
-      
-      const newDir=`/root/smc/frontend/src/assets/avatars/${user._id}`
+
+      const newDir = `/root/smc/frontend/src/assets/avatars/${user._id}`
       try {
         if (!fs.existsSync(newDir)) {
           fs.mkdirSync(newDir);
         }
 
-        fs.copyFile("/root/smc/frontend/src/assets/smc_head.png",`${newDir}/avatar.png`, (err) => {
+        fs.copyFile("/root/smc/frontend/src/assets/smc_head.png", `${newDir}/avatar.png`, (err) => {
           if (err) throw err;
           console.log("copied avatar");
         });
@@ -85,7 +111,6 @@ app.post("/addUser", (req, res) => {
 app.get("/users/:_id", (req, res) => {
   User.find({ _id: req.params._id })
     .then(user => {
-      console.log(user);
       res.send(user[0])
     })
     .catch((error) => console.log(error));
@@ -140,14 +165,6 @@ app.get("/posts", verifyToken, (req, res) => {
     })
     .catch((error) => console.log(error));
 });
-
-/* outdated, sending back aggregate object above so we have access to posted by user's name
-app.get("/posts",(req,res) => {
- Post.find({})
-  .then(posts=>res.send(posts))
-  .catch((error) => console.log(error));
-});
-*/
 
 app.post("/addPost", (req, res) => {
   (new Post({
@@ -212,7 +229,6 @@ function verifyToken(req, res, next) {
   if (token === 'null') {
     return res.status(401).send("Unauthorized Request");
   }
-  console.log("will verify token");
   try {
     const payload = jwt.verify(token, config_data.jwt_key);
     req.userId = payload.subject;
@@ -221,6 +237,42 @@ function verifyToken(req, res, next) {
     console.log("jwt err: ", err);
     return res.status(401).send("Unauthorized Request");
   }
+}
+
+const storage = multer.diskStorage({
+  destination: function (req, file, cb) {
+    cb(null, '/root/smc/frontend/src/assets/avatars/');
+  },
+
+  // By default, multer removes file extensions so let's add them back
+  filename: function (req, file, cb) {
+    cb(null, file.fieldname + '-' + Date.now() + path.extname(file.originalname));
+  }
+});
+
+const upload = multer({ storage: storage });
+
+app.post("/uploadFile", upload.single("avatarUpload"), uploadFiles);
+
+function uploadFiles(req, res) {
+  if (req.fileValidationError) {
+    return res.send(req.fileValidationError);
+  }
+  else if (!req.file) {
+    return res.send({ "resp": "Please select an image to upload" });
+  }
+  /*
+  else if (err instanceof multer.MulterError) {
+    console.log("error 3");
+    return res.send(JSON.stringify(err));
+  }
+  else if (err) {
+    console.log("error 4");
+    return res.send(JSON.stringify(err));
+  }
+  */
+  //we good
+  res.send({ "loc": req.file.filename });
 }
 
 httpsServer.listen(3978, function () {
