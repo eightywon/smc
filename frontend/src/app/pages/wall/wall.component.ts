@@ -80,7 +80,7 @@ export class WallComponent implements OnInit {
   }
 
   public reply(parentId: string) {
-    const replyField = (<HTMLInputElement>document.getElementById("replyText"));
+    const replyField = (<HTMLInputElement>document.getElementById("replyText"+parentId));
     const replyText = replyField.value;
     let userId = localStorage.getItem("userId");
     if (userId) {
