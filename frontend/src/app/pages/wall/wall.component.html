@@ -9,12 +9,13 @@
         <div class="w3-container w3-display-container">
           <span class="w3-display-bottomright w3-padding"><i class="fa fa-gear" (click)="showUpdateUser()"
               onmouseover="" style="cursor: pointer;"></i></span>
-          <p class="w3-center" [hidden]="!this.user"><img src="assets/avatars/{{ this.user && this.user._id }}/avatar.png"
-              style="height:106px;width:auto;"></p>
+          <p class="w3-center" [hidden]="!this.user"><img
+              src="assets/avatars/{{ this.user && this.user._id }}/avatar.png" style="height:106px;width:auto;"></p>
           <p class="w3-center"><span class="" (click)="signOut();" onmouseover="" style="cursor: pointer;"><u>sign
                 out</u></span></p>
           <hr>
-          <p><i class="fa fa-user fa-fw w3-text-theme"></i> {{ this.user && this.user.realName }} {{ this.displayName && this.displayName}}</p>
+          <p><i class="fa fa-user fa-fw w3-text-theme"></i> {{ this.user && this.user.realName }} {{ this.displayName &&
+            this.displayName}}</p>
           <p><i class="fa fa-mobile fa-fw w3-text-theme"></i> {{ this.user && this.user.cell }}</p>
         </div>
       </div>
@@ -58,20 +59,39 @@
         </div>
       </div>
 
+      <!-- posts -->
       <div class="w3-container w3-display-container w3-card w3-white w3-round w3-margin"
-        *ngFor="let post of posts && posts.reverse()"><br>
-        <img src="assets/avatars/{{ post.users[0]._id }}/avatar.png" class="w3-left w3-circle w3-margin-right"
-          style="height:60px; width: auto;">
-        <span class="w3-button w3-display-topright" (click)="deletePost(post._id)"><i class="fa fa-remove"></i></span>
-        <h6 class="w3-text-theme"><strong>{{ post.users[0]['displayName'] }} said (<span title="{{ moment(post.postDate) }}">{{ moment(post.postDate).fromNow() }}</span>)...</strong></h6>
+        *ngFor="let post of posts && posts.reverse()">
+        <img src="assets/avatars/{{ post.postUser._id }}/avatar.png" class="w3-left w3-circle w3-margin-right"
+          style="height:60px; width: auto; margin-top: 10px;">
+        <span *ngIf="this.user._id==post.postedByUserId" class="w3-button w3-display-topright" (click)="deletePost(post._id)">
+          <i class="fa fa-remove"></i>
+        </span>
+        <h6 class="w3-text-theme"><strong>{{ post.postUser['displayName'] }} said (<span
+              title="{{ moment(post.postDate) }}">{{ moment(post.postDate).fromNow() }}</span>)...</strong></h6>
         <!-- <hr class="w3-clear" style="margin-top: 45px; margin-bottom: 5px;"> -->
         <p style="white-space: pre-line; margin-top:-2px;">{{ post.postText }}</p>
-        <button type="button" class="w3-button w3-theme-d1 w3-margin-bottom"><i class="fa fa-thumbs-up"></i>
-          Like</button>
-        <button type="button" class="w3-button w3-theme-d2 w3-margin-bottom"><i class="fa fa-comment"></i>
-          Comment</button>
-        <span class="w3-display-bottomright w3-padding">More...</span>
+
+        <!-- replies -->
+        <div class="w3-container w3-display-container w3-margin" *ngFor="let reply of post.replies">
+          <!-- <img src="assets/avatars/{{ this.user._id }}/avatar.png" class="w3-left w3-circle w3-margin-right"
+              style="height:20px; width: auto;"> -->
+          <div class="w3-text-theme"><strong><span title="{{ moment(reply.postDate) }}">{{ reply.displayName }}</span>: </strong>
+            <span class="w3-text-black">{{ reply.postText}}</span>
+          </div>
+        </div>
+        <!-- end replies -->
+
+        <div class="w3-margin-bottom w3-row w3-section">
+          <div class="w3-col" style="width:25px;"><i class="w3-text-theme fa fa-thumbs-up"></i></div>
+          <div class="w3-rest">
+            <textarea rows="2" class="w3-border w3-padding" id="replyText" placeholder="Reply..."
+              style="width:100%; resize: none; white-space: pre-line;"></textarea>
+            <button class="w3-button w3-block w3-theme-l4" (click)="reply(post._id)">Post</button>
+          </div>
+        </div>
       </div>
+      <!-- posts -->
 
       <!-- End Middle Column -->
     </div>

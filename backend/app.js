@@ -145,25 +145,62 @@ app.get("/login/:_id", (req, res) => {
 
 //posts by specific user
 app.get("/users/:_id/posts/", (req, res) => {
-  Post.find({ postedByUserIdid: req.params._id })
+  Post.find({ postedByUserId: req.params._id })
     .then(post => res.send(post))
     .catch((error) => console.log(error));
 });
 
 //posts
 app.get("/posts", verifyToken, (req, res) => {
-  Post.aggregate([{
-    $lookup: {
-      from: "users",
-      localField: "postedByUserId",
-      foreignField: "_id",
-      as: "users"
+  Post.aggregate([
+    {
+      $lookup: {
+        from: "users",
+        localField: "postedByUserId",
+        foreignField: "_id",
+        as: "postUser"
+      }
+    },
+    {
+      $unwind: "$postUser"
     }
-  }])
-    .then(function (agg) {
+  ])
+  .then(function (agg) {
+    Post.aggregate([
+      {
+        $lookup: {
+          from: "users",
+          localField: "replies.postedByUserId",
+          foreignField: "_id",
+          as: "replyUser"
+        }
+      },
+      {
+        $unwind: "$replyUser"
+      },
+      {
+        $project: {
+          "_id": 0,
+          "replyUser._id": 1,
+          "replyUser.displayName": 1
+        }
+      }
+    ])
+    .then(function(repAgg) {
+      for (var i=0;i<agg.length;i++) {
+        for (var x=0;x<agg[i].replies.length;x++) {
+          for (var z=0;z<repAgg.length;z++) {
+            if (repAgg[z].replyUser._id.equals(agg[i].replies[x].postedByUserId)) {
+              agg[i].replies[x].displayName=repAgg[z].replyUser.displayName;
+            }
+          }
+        }
+      }
       res.send(agg);
     })
-    .catch((error) => console.log(error));
+  
+  })
+  .catch((error) => console.log(error));
 });
 
 app.post("/addPost", (req, res) => {
@@ -172,26 +209,58 @@ app.post("/addPost", (req, res) => {
     'postedByUserId': req.body.postedByUserId,
     'postDate': new Date()
   }))
-    .save()
-    .then((post) => {
-      //send back new post collection so UI is updated
-      Post.aggregate([{
+  .save()
+  .then(function (post) {
+    Post.aggregate([
+      {
         $lookup: {
           from: "users",
           localField: "postedByUserId",
           foreignField: "_id",
-          as: "users"
+          as: "postUser"
         }
-      }])
-        .then(function (agg) {
-          console.log("sending back ", agg);
-          res.send(agg);
-        })
-        .catch((error) => console.log(error));
+      },
+      {
+        $unwind: "$postUser"
+      }
+    ])
+    .then(function (agg) {
+      Post.aggregate([
+        {
+          $lookup: {
+            from: "users",
+            localField: "replies.postedByUserId",
+            foreignField: "_id",
+            as: "replyUser"
+          }
+        },
+        {
+          $unwind: "$replyUser"
+        },
+        {
+          $project: {
+            "_id": 0,
+            "replyUser._id": 1,
+            "replyUser.displayName": 1
+          }
+        }
+      ])
+      .then(function(repAgg) {
+        for (var i=0;i<agg.length;i++) {
+          for (var x=0;x<agg[i].replies.length;x++) {
+            for (var z=0;z<repAgg.length;z++) {
+              if (repAgg[z].replyUser._id.equals(agg[i].replies[x].postedByUserId)) {
+                agg[i].replies[x].displayName=repAgg[z].replyUser.displayName;
+              }
+            }
+          }
+        }
+        res.send(agg);
+      })
+    
     })
-    .catch((error) => {
-      console.log(error);
-    });
+  
+  })
 });
 
 app.get("/posts/:_id", (req, res) => {
@@ -203,20 +272,54 @@ app.get("/posts/:_id", (req, res) => {
 app.delete("/posts/:_id", (req, res) => {
   Post.findOneAndDelete({ "_id": req.params._id })
     .then(post => {
-      //send back new post collection so UI is updated
-      Post.aggregate([{
-        $lookup: {
-          from: "users",
-          localField: "postedByUserId",
-          foreignField: "_id",
-          as: "users"
+      Post.aggregate([
+        {
+          $lookup: {
+            from: "users",
+            localField: "postedByUserId",
+            foreignField: "_id",
+            as: "postUser"
+          }
+        },
+        {
+          $unwind: "$postUser"
         }
-      }])
-        .then(function (agg) {
-          console.log("sending back ", agg);
+      ])
+      .then(function (agg) {
+        Post.aggregate([
+          {
+            $lookup: {
+              from: "users",
+              localField: "replies.postedByUserId",
+              foreignField: "_id",
+              as: "replyUser"
+            }
+          },
+          {
+            $unwind: "$replyUser"
+          },
+          {
+            $project: {
+              "_id": 0,
+              "replyUser._id": 1,
+              "replyUser.displayName": 1
+            }
+          }
+        ])
+        .then(function(repAgg) {
+          for (var i=0;i<agg.length;i++) {
+            for (var x=0;x<agg[i].replies.length;x++) {
+              for (var z=0;z<repAgg.length;z++) {
+                if (repAgg[z].replyUser._id.equals(agg[i].replies[x].postedByUserId)) {
+                  agg[i].replies[x].displayName=repAgg[z].replyUser.displayName;
+                }
+              }
+            }
+          }
           res.send(agg);
         })
-        .catch((error) => console.log(error));
+      
+      })
     })
     .catch((error) => console.log(error));
 });
@@ -274,6 +377,70 @@ function uploadFiles(req, res) {
   //we good
   res.send({ "loc": req.file.filename });
 }
+
+//replies
+app.patch("/addReply/:_id", (req, res) => {
+  //User.findOneAndUpdate({ "_id": req.params._id }, { $set: req.body }, { new: true })
+  console.log("addReply, parentId: ",req.params);
+  const repObj = {
+    'postText': req.body.postText,
+    'postedByUserId': req.body.postedByUserId,
+    'postDate': new Date(),
+    'parentId': req.body.parentId
+  };
+  Post.findOneAndUpdate({ "_id": req.params._id}, { $push: {replies : repObj }}, { new: true })
+    .then(post => {
+      Post.aggregate([
+        {
+          $lookup: {
+            from: "users",
+            localField: "postedByUserId",
+            foreignField: "_id",
+            as: "postUser"
+          }
+        },
+        {
+          $unwind: "$postUser"
+        }
+      ])
+      .then(function (agg) {
+        Post.aggregate([
+          {
+            $lookup: {
+              from: "users",
+              localField: "replies.postedByUserId",
+              foreignField: "_id",
+              as: "replyUser"
+            }
+          },
+          {
+            $unwind: "$replyUser"
+          },
+          {
+            $project: {
+              "_id": 0,
+              "replyUser._id": 1,
+              "replyUser.displayName": 1
+            }
+          }
+        ])
+        .then(function(repAgg) {
+          for (var i=0;i<agg.length;i++) {
+            for (var x=0;x<agg[i].replies.length;x++) {
+              for (var z=0;z<repAgg.length;z++) {
+                if (repAgg[z].replyUser._id.equals(agg[i].replies[x].postedByUserId)) {
+                  agg[i].replies[x].displayName=repAgg[z].replyUser.displayName;
+                }
+              }
+            }
+          }
+          res.send(agg);
+        })
+      
+      })
+    })
+    .catch((error) => console.log(error));
+});
 
 httpsServer.listen(3978, function () {
   console.log("listening on port 3978");

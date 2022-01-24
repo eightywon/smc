@@ -57,7 +57,7 @@ export class UpdateUserComponent implements OnInit {
              .subscribe(res=>console.log(res),
              err=>console.log(err));
           }
-          //window.location.reload();
+          window.location.reload();
         });
       //trap error
     }

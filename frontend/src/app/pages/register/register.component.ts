@@ -46,7 +46,7 @@ export class RegisterComponent implements OnInit {
 
   cfSubmit(cf: NgForm, e: Event) {
     //testing
-    this.regCode=cf.value.code;
+    //this.regCode=cf.value.code;
 
     if (cf.value.code == this.regCode) {
       console.log("matched! user: ", this.user);
@@ -93,8 +93,6 @@ export class RegisterComponent implements OnInit {
           this.regCode = Math.floor(Math.random() * (this.max - this.min + 1)) + this.min;
           f.value.message = `Your SMC verification code is ${this.regCode}`;
 
-          //testing
-          /*
           this.http.post<res>(`${this.ROOT_URL}/regsms`, f.value)
             .subscribe(res => {
 
@@ -109,7 +107,6 @@ export class RegisterComponent implements OnInit {
               }
               this.showVerification = true;
             });
-          */
             this.user = f.value;
             this.smsSent=true;
             this.showVerification=true;

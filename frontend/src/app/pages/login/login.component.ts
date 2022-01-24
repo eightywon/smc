@@ -49,7 +49,7 @@ export class LoginComponent implements OnInit {
 
   cfSubmit(cf: NgForm, e: Event) {
     //testing
-    this.regCode = cf.value.code;
+    //this.regCode = cf.value.code;
 
     if (cf.value.code == this.regCode) {
       this.userService.getUserByCell(this.cell)

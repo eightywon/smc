@@ -29,4 +29,18 @@ export class PostService {
   deletePost(id: string) {
    return this.http.delete<Post[]>(`${this.ROOT_URL}/posts/${id}`)
   }
+
+  addReply(postText: string, postedByUserId: string, parentId: string) {
+    var tmpJson={
+      "postText": postText,
+      "postedByUserId": postedByUserId,
+      "parentId": parentId
+     };
+    console.log("addReply obj: ",tmpJson);
+    return this.http.patch<Post[]>(`${this.ROOT_URL}/addReply/${parentId}`,tmpJson)
+  }
+
+  getReplies(id: string) {
+    return this.http.get<Post[]>(`${this.ROOT_URL}/replies/${id}`);
+   }
 }
