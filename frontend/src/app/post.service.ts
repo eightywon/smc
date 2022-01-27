@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from "@angular/common/http";
-
 import Post from "./models/posts"
+import { Socket } from 'ngx-socket-io';
 
 @Injectable({
   providedIn: 'root'
@@ -10,9 +10,16 @@ import Post from "./models/posts"
 export class PostService {
    readonly ROOT_URL;
 
-  constructor(private http: HttpClient) {
+  constructor(private http: HttpClient,private socket: Socket) {
    this.ROOT_URL="https://smokingmonkey.club:3978";
   }
+
+  /*
+  getDocument(id: string) {
+    console.log("getting socketio doc");
+    this.socket.emit('getDoc', id)
+  }
+  */
 
   getPosts() {
    return this.http.get<Post[]>(`${this.ROOT_URL}/posts`);

@@ -15,6 +15,18 @@ const jwt = require('jsonwebtoken');
 const multer = require('multer');
 const path = require('path');
 
+const socketServer=https.createServer(sslCreds,app);
+
+const {Server} = require("socket.io");
+const io = new Server(socketServer, {
+  cors: {
+    methods: ["GET", "POST"],
+    transports: ['websocket', 'polling'],
+    credentials: true
+  },
+  allowEIO3: true
+});
+
 app.use(express.json());
 
 //set headers for CORS support
@@ -196,6 +208,7 @@ app.get("/posts", verifyToken, (req, res) => {
           }
         }
       }
+      io.emit("postCollection", agg);
       res.send(agg);
     })
   
@@ -255,6 +268,7 @@ app.post("/addPost", (req, res) => {
             }
           }
         }
+        io.emit("postCollection", agg);
         res.send(agg);
       })
     
@@ -316,6 +330,7 @@ app.delete("/posts/:_id", (req, res) => {
               }
             }
           }
+          io.emit("postCollection", agg);
           res.send(agg);
         })
       
@@ -434,6 +449,7 @@ app.patch("/addReply/:_id", (req, res) => {
               }
             }
           }
+          io.emit("postCollection", agg);
           res.send(agg);
         })
       
@@ -442,6 +458,27 @@ app.patch("/addReply/:_id", (req, res) => {
     .catch((error) => console.log(error));
 });
 
+//socketio shit
+io.on('connection', (socket) => {
+  console.log('a user connected ',socket.id);
+
+  /*
+  socket.on("getDoc", docId => {
+    console.log("getDoc");
+    io.emit("document", "io emit");
+    //socket.emit("document", "socket emit");
+  });
+  */
+  socket.on("someoneTyping", (postId,socketId) => {
+    //console.log("someone is typing ",postId,socketId);
+    io.emit("someoneTyping",postId,socketId);
+  });
+});
+
 httpsServer.listen(3978, function () {
   console.log("listening on port 3978");
+});
+
+socketServer.listen(4444, function () {
+  console.log("socket io listening on port 4444");
 });

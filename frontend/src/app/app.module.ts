@@ -11,6 +11,9 @@ import { UpdateUserComponent } from './pages/update-user/update-user.component';
 import { AuthGuard } from './auth.guard';
 import { TokenInterceptorService} from './token-interceptor.service';
 import { LoginComponent } from './pages/login/login.component';
+import { SocketIoModule, SocketIoConfig } from 'ngx-socket-io';
+
+const config: SocketIoConfig = { url: 'https://smokingmonkey.club:4444', options: {} };
 
 @NgModule({
   declarations: [
@@ -25,7 +28,8 @@ import { LoginComponent } from './pages/login/login.component';
     BrowserModule,
     AppRoutingModule,
     HttpClientModule,
-    FormsModule
+    FormsModule,
+    SocketIoModule.forRoot(config)
   ],
   providers: [AuthGuard, 
     {

@@ -7,6 +7,7 @@ import { HttpErrorResponse } from '@angular/common/http';
 import { Router } from '@angular/router';
 import User from "../../models/users";
 import { UserService } from 'src/app/user.service';
+import { Socket } from 'ngx-socket-io';
 
 @Component({
   selector: 'app-wall',
@@ -29,10 +30,13 @@ export class WallComponent implements OnInit {
   constructor(private postService: PostService,
     private el: ElementRef,
     private router: Router,
-    private userService: UserService) { }
-
+    private userService: UserService,
+    private socket: Socket) { }
 
   ngOnInit() {
+      //console.log("getting document");
+      //this.postService.getDocument("1234");
+
     this.updateUserDiv = this.el.nativeElement.querySelector("#updateUser");
     const userId = localStorage.getItem("userId");
     if (userId) {
@@ -59,9 +63,31 @@ export class WallComponent implements OnInit {
             });
         });
     }
+
+    this.socket.on('someoneTyping', (postId: string, socketId: string) => {
+      //console.log(socketId,this.socket.ioSocket.id);
+      //only show typing animation if typee someone other than current user
+      if (socketId!=this.socket.ioSocket.id) {
+        const temp="isTyping"+postId;
+        const typingField = (<HTMLInputElement>document.getElementById(temp));
+        typingField.style.display="block";
+  
+        setTimeout(() => {
+          typingField.style.display="none";
+        }, 10000);
+      }
+    });
+
+    this.socket.on('postCollection', (postCollection: Post[]) => {
+      console.log("got an updated post collection, ",postCollection);
+      this.posts=postCollection;
+    });
   }
 
   public post() {
+    //console.log("getting document");
+    //this.postService.getDocument("1234");
+
     const postFld = (<HTMLInputElement>document.getElementById("newPost"));
     const postText = postFld.value;
     console.log(postFld);
@@ -109,5 +135,9 @@ export class WallComponent implements OnInit {
     localStorage.removeItem("token");
     localStorage.removeItem("userId");
     this.router.navigate(["/"]);
+  }
+
+  postKeyup(postId: string) {
+    this.socket.emit("someoneTyping",postId,this.socket.ioSocket.id);
   }
 }
