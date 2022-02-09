@@ -1,0 +1,14 @@
+<div class="w3-card w3-round w3-white">
+    <div class="w3-container w3-display-container">
+      <span class="w3-display-bottomright w3-padding"><i class="fa fa-gear" (click)="showUpdateUser()"
+          onmouseover="" style="cursor: pointer;"></i></span>
+      <p class="w3-center" [hidden]="!this.user"><img
+          src="assets/avatars/{{ this.user && this.user._id }}/avatar.png" style="height:106px;width:auto;"></p>
+      <p class="w3-center"><span class="" (click)="signOut();" onmouseover="" style="cursor: pointer;"><u>sign
+            out</u></span></p>
+      <hr>
+      <p><i class="fa fa-user fa-fw w3-text-theme"></i> {{ this.user && this.user.realName }} {{ this.displayName &&
+        this.displayName}}</p>
+      <p><i class="fa fa-mobile fa-fw w3-text-theme"></i> {{ this.user && this.user.cell }}</p>
+    </div>
+  </div>

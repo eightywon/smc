@@ -17,15 +17,11 @@ import { Socket } from 'ngx-socket-io';
 
 export class WallComponent implements OnInit {
 
-  @ViewChild("updateUser") div: ElementRef;
-
-  posts: Post[];
-  replies: Reply[];
-  user: User;
+  posts: Post[]=[];
+  replies: Reply[]=[];
+  user!: User;
   moment: any = moment;
-  @Input() updateUser: boolean = false;
-  updateUserDiv: HTMLElement;
-  displayName: string;
+  displayName!: string;
 
   constructor(private postService: PostService,
     private el: ElementRef,
@@ -34,10 +30,6 @@ export class WallComponent implements OnInit {
     private socket: Socket) { }
 
   ngOnInit() {
-      //console.log("getting document");
-      //this.postService.getDocument("1234");
-
-    this.updateUserDiv = this.el.nativeElement.querySelector("#updateUser");
     const userId = localStorage.getItem("userId");
     if (userId) {
       this.userService.getUser(userId)
@@ -85,9 +77,6 @@ export class WallComponent implements OnInit {
   }
 
   public post() {
-    //console.log("getting document");
-    //this.postService.getDocument("1234");
-
     const postFld = (<HTMLInputElement>document.getElementById("newPost"));
     const postText = postFld.value;
     console.log(postFld);
@@ -124,17 +113,6 @@ export class WallComponent implements OnInit {
       .subscribe((posts) => {
         this.posts = posts;
       });
-  }
-
-  showUpdateUser() {
-    this.updateUserDiv.classList.add("w3-show");
-    this.updateUserDiv.classList.remove("w3-hide");
-  }
-
-  signOut() {
-    localStorage.removeItem("token");
-    localStorage.removeItem("userId");
-    this.router.navigate(["/"]);
   }
 
   postKeyup(postId: string) {

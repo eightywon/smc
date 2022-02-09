@@ -12,6 +12,12 @@ import { AuthGuard } from './auth.guard';
 import { TokenInterceptorService} from './token-interceptor.service';
 import { LoginComponent } from './pages/login/login.component';
 import { SocketIoModule, SocketIoConfig } from 'ngx-socket-io';
+import { ImageCropperModule } from 'ngx-image-cropper';
+import { EventsComponent } from './pages/events/events.component';
+import { MainComponent } from './pages/main/main.component';
+import { EventsSummaryComponent } from './pages/events-summary/events-summary.component';
+import { ProfileComponent } from './pages/profile/profile.component';
+import { AddEventComponent } from './pages/add-event/add-event.component';
 
 const config: SocketIoConfig = { url: 'https://smokingmonkey.club:4444', options: {} };
 
@@ -23,13 +29,19 @@ const config: SocketIoConfig = { url: 'https://smokingmonkey.club:4444', options
     IndexComponent,
     UpdateUserComponent,
     LoginComponent,
+    EventsComponent,
+    MainComponent,
+    EventsSummaryComponent,
+    ProfileComponent,
+    AddEventComponent,
   ],
   imports: [
     BrowserModule,
     AppRoutingModule,
     HttpClientModule,
     FormsModule,
-    SocketIoModule.forRoot(config)
+    SocketIoModule.forRoot(config),
+    ImageCropperModule
   ],
   providers: [AuthGuard, 
     {

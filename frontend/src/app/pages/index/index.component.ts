@@ -13,7 +13,7 @@ export class IndexComponent implements OnInit {
 
   ngOnInit(): void {
     if (this.userService.loggedIn()) {
-      this.router.navigate(["/wall"]);
+      this.router.navigate(["/main"]);
     }
   }
 

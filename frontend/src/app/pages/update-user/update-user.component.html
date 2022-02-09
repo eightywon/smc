@@ -9,21 +9,43 @@
             <div class="w3-row w3-section">
                 <div class="w3-rest w3-center">
                     <div class="w3-container w3-display-container w3-text-white">
+                        <!-- testing -->
+                        <image-cropper
+                        [imageChangedEvent]="imageChangedEvent"
+                        [maintainAspectRatio]="true"
+                        [aspectRatio]="1 / 1"
+                        [imageURL]="this.tempAvatar"
+                        format="png"
+                        (imageCropped)="imageCropped($event)"
+                        (imageLoaded)="imageLoaded()"
+                        (cropperReady)="cropperReady()"
+                        (loadImageFailed)="loadImageFailed()"
+                        [hidden]="true"
+                        ></image-cropper>
+                        <!-- end testing -->
+                        <!--
                         <div class="w3-display-middle w3-container" [hidden]="!this.showSpinner"><i
                                 class="w3-xxlarge fa fa-spinner w3-text-white w3-spin"></i></div>
                         <img class="w3-hover-opacity" src="{{ this.tempAvatar }}" id="avatar"
                             style="height:106px; width:auto; cursor: pointer;" (click)="uploadAvatar()" onmouseover="">
+                        -->
                         <input type="file" id="avatarUpload" name="avatarUpload" style="display:none"
-                            (change)="onFileSelected($event)" />
+                            (change)="fileChangeEvent($event)" />
                     </div>
                 </div>
             </div>
+
             <div class="w3-row w3-section">
+                <div class="w3-container w3-text-theme" (click)="uploadAvatar()" onmouseover=""
+                style="cursor: pointer;">Click to Upload New</div>
+                <!--
                 <div class="w3-rest-center">
                     <div class="w3-display-middle w3-container w3-text-theme" (click)="uploadAvatar()" onmouseover=""
                         style="cursor: pointer;">Click to change</div>
                 </div>
+                -->
             </div>
+            
             <div class="w3-row w3-section w3-padding">
                 <div class="w3-col" style="width:50px"><i class="w3-xxlarge fa fa-user w3-text-theme"></i></div>
                 <div class="w3-rest">

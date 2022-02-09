@@ -1,0 +1,18 @@
+<div class="w3-container w3-display-container" style="margin-bottom: 30px;" *ngIf="this.isAdmin">
+    <button (click)="showAddEvent()">Add Event</button>
+</div>
+
+<div style="margin-top: -15px;">
+    <div class="w3-container w3-display-container w3-card w3-white w3-round w3-margin"
+        *ngFor="let event of events && events.reverse()">
+        <span class="w3-button w3-display-topright" (click)="deleteEvent(event._id)">
+            <i class="fa fa-remove"></i>
+        </span>
+        <p>{{event.eventDate}}</p>
+        <div class="w3-rest">
+            <p>{{event.eventDescription}}</p>
+        </div>
+    </div>
+</div>
+
+<app-add-event></app-add-event>

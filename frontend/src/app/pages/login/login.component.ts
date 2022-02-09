@@ -43,7 +43,7 @@ export class LoginComponent implements OnInit {
     this.cf = this.el.nativeElement.querySelector("#cf");
     this.f = this.el.nativeElement.querySelector("#f");
     if (this.userService.loggedIn()) {
-      this._router.navigate(["/wall"]);
+      this._router.navigate(["/main"]);
     }
   }
 
@@ -60,7 +60,7 @@ export class LoginComponent implements OnInit {
               console.log("res: ", res);
               localStorage.setItem("token", res.token);
               localStorage.setItem("userId", res.userId)
-              this._router.navigate(["/wall"]);
+              this._router.navigate(["/main"]);
             });
         });
       //catch error here
