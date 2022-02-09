@@ -14,8 +14,8 @@ import { Router } from '@angular/router';
 })
 
 export class LoginComponent implements OnInit {
-  cf: HTMLElement;
-  f: HTMLElement
+  cf!: HTMLElement;
+  f!: HTMLElement
   readonly ROOT_URL;
   smsSent: boolean = false;
   showVerification: boolean = false;

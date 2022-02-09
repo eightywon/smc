@@ -1,10 +1,11 @@
 export default class User {
- realName: string;
- displayName: string;
- email: string;
- cell: string;
- verificationCode: string;
- _id: string;
- avatar: string;
- reference: string;
+ realName!: string;
+ displayName!: string;
+ email!: string;
+ cell!: string;
+ verificationCode!: string;
+ _id!: string;
+ avatar!: string;
+ reference!: string;
+ isAdmin!: boolean;
 }

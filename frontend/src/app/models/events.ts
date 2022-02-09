@@ -3,8 +3,8 @@ export default class Event {
  eventDescription!: string;
  eventCreatedByUserId!: string;
  creationDate!: Date;
- eventDate!: Date;
+ eventDateTime!: Date;
  eventType!: String;
  _id!: string;
- eventTime!: String;
+ eventOtherDesc!: string;
 }

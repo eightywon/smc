@@ -27,6 +27,9 @@ const UserSchema=new mongoose.Schema({
  },
  avatar: {
   type: String
+ },
+ isAdmin: {
+     type: Boolean
  }
 });
 

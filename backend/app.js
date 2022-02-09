@@ -496,14 +496,14 @@ app.get("/events", verifyToken, (req, res) => {
 });
 
 app.post("/addEvent", (req, res) => {
-  console.log("adding event");
+  console.log("adding event, ",req.body);
   (new Event({
     'eventDescription': req.body.eventDescription,
-    //'eventCreatedByUserId': req.body.eventCreatedByUserId,
+    'eventCreatedByUserId': req.body.eventCreatedByUserId,
     'creationDate': new Date(),
-    'eventDate': new Date(),
     'eventType': req.body.eventType,
-    'eventTime': req.body.eventTime
+    'eventDateTime': req.body.eventDateTime,
+    'eventOtherDesc': req.body.eventOtherDesc
   }))
     .save()
     .then(function (event) {

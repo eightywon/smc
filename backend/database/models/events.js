@@ -13,18 +13,19 @@ const EventSchema = new mongoose.Schema({
         type: Date,
         required: true
     },
-    eventDate: {
+    eventDateTime: {
         type: Date,
         required: true
     },
     eventType: {
         type: String,
         trim: true,
+        required: true
     },
-    eventTime: {
+    eventOtherDesc: {
         type: String,
-        trim: true,
-    },
+        trim: true
+    }
 });
 
 const Event = mongoose.model("Events", EventSchema);

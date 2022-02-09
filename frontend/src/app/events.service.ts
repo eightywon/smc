@@ -2,6 +2,7 @@ import { Injectable } from '@angular/core';
 import { HttpClient } from "@angular/common/http";
 import { Socket } from 'ngx-socket-io';
 import Event from './models/events';
+import * as moment from 'moment';
 
 @Injectable({
   providedIn: 'root'
@@ -21,13 +22,16 @@ export class EventsService {
   addEvent(eventDescription: string,
     eventCreatedByUserId: string,
     eventType: string,
-    eventTime: string) {
+    eventTime: string,
+    eventDate: string,
+    eventOtherDesc: string) {
     
     var tmpJson = {
       "eventDescription": eventDescription,
       "eventCreatedByUserId": eventCreatedByUserId,
       "eventType": eventType,
-      "eventTIme": eventTime
+      "eventDateTime": moment(eventDate+' '+eventTime+":00").utc(),
+      "eventOtherDesc": eventOtherDesc
     };
     console.log("adding event events.service ",tmpJson);
     return this.http.post<Event[]>(`${this.ROOT_URL}/addEvent`, tmpJson).subscribe(res=>console.log(res));

@@ -10,5 +10,6 @@
       <p><i class="fa fa-user fa-fw w3-text-theme"></i> {{ this.user && this.user.realName }} {{ this.displayName &&
         this.displayName}}</p>
       <p><i class="fa fa-mobile fa-fw w3-text-theme"></i> {{ this.user && this.user.cell }}</p>
+      <p><span (click)="goWall()">Wall</span> | <span (click)="goEvents()">Events</span></p>
     </div>
   </div>

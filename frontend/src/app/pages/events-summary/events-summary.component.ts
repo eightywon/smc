@@ -12,12 +12,4 @@ export class EventsSummaryComponent implements OnInit {
 
   ngOnInit(): void {
   }
-
-  public addEvent () {
-    console.log("adding evnt");
-    this.eventService.addEvent("Some Event",
-    "12345",
-    "Tournament",
-    "8pm")
-  }
 }

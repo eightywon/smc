@@ -45,4 +45,12 @@ export class ProfileComponent implements OnInit {
     localStorage.removeItem("userId");
     this.router.navigate(["/"]);
   }
+
+  goWall() {
+    this.router.navigate(["/main/wall"]);
+  }
+
+  goEvents() {
+    this.router.navigate(["/main/events"]);
+  }
 }

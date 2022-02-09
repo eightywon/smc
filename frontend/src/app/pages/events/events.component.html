@@ -1,17 +1,25 @@
-<div class="w3-container w3-display-container" style="margin-bottom: 30px;" *ngIf="this.isAdmin">
-    <button (click)="showAddEvent()">Add Event</button>
+<div class="w3-container w3-display-container" style="margin-top:-15px;" *ngIf="this.user && this.user.isAdmin">
+    <div class="w3-row w3-quarter">
+        <button class="w3-button w3-block w3-section w3-button w3-theme w3-ripple" (click)="showAddEvent()">Add
+            Event</button>
+    </div>
 </div>
 
 <div style="margin-top: -15px;">
     <div class="w3-container w3-display-container w3-card w3-white w3-round w3-margin"
-        *ngFor="let event of events && events.reverse()">
+        *ngFor="let event of futureEvents">
         <span class="w3-button w3-display-topright" (click)="deleteEvent(event._id)">
             <i class="fa fa-remove"></i>
         </span>
-        <p>{{event.eventDate}}</p>
+        <p class="w3-block w3-section w3-theme"><strong>{{ moment(event.eventDateTime).local().format("ddd M/D/YYYY @
+                h:mmA") }} - {{ event.eventType }}
+                <span *ngIf="event.eventOtherDesc!=''">: {{ event.eventOtherDesc }}</span></strong></p>
+        <p>{{ moment(event.eventDateTime).fromNow() }}</p>
         <div class="w3-rest">
             <p>{{event.eventDescription}}</p>
         </div>
+        <div class="w3-row w3-right w3-padding"><button
+                class="w3-button w3-block w3-section w3-button w3-theme w3-ripple">Register</button></div>
     </div>
 </div>
 

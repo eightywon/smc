@@ -9,42 +9,69 @@
             <div class="w3-row w3-section w3-padding">
                 <div class="w3-row">
                     <input class="w3-input w3-border form-control" name="eventDescription" type="text"
-                        placeholder="Event Description" ngModel>
+                        placeholder="Event Description" required ngModel id='eventDescription'>
                 </div>
                 <div class="w3-row">
                     <div class="w3-col s7 m8 l8">
                         <input class="w3-input w3-border form-control" name="eventDate" type="date"
-                            value="{{ this.today|date:'yyyy-MM-dd' }}" ngModel>
+                            [(ngModel)]="this.today" required>
                     </div>
                     <div class="w3-col s5 m4 l4">
                         <input class="w3-input w3-border form-control" name="eventTime" type="time" value="20:00"
-                            ngModel>
+                            [(ngModel)]="this.goTime" required>
                     </div>
                 </div>
 
                 <div class="w3-row">
-                    <input class="w3-radio form-control" type="radio" value="tournament" name="eventType"
-                        [(ngModel)]="eventType" ngModel>
+                    <input class="w3-radio form-control" type="radio" value="Tournament" name="eventType"
+                        [(ngModel)]="eventType" ngModel required>
                     &nbsp;<label>Tournament</label>
                 </div>
+                <div class="w3-row w3-padding" *ngIf="eventType=='Tournament'">
+                    <div class="w3-col s6 m6 l6">
+                        <label for="buyin">Buy In</label>
+                        <input class="w3-input w3-border form-control" name="buyin" type="number" 
+                            min="0" step="5" required [(ngModel)]="this.buyIn" id='buyin'>
+                    </div>
+                    <div class="w3-rest">
+                        <label for="rebuys">Rebuys</label>
+                        <input class="w3-input w3-border form-control" name="rebuys" type="number" value="0"
+                            min="0" max="10" required #reBuys="ngModel" [(ngModel)]="this.reBuysDefault" id='rebuys'>
+                        <span *ngIf="reBuys.invalid" class="w3-red">0-10 rebuys</span>  
+                    </div>
+                    <div class="w3-half">
+                        <label for="maxplayers">Max Reg'd Players</label>
+                        <input class="w3-input w3-border form-control" name="maxplayers" type="number" 
+                            min="1" max="100" step="1" required [(ngModel)]="this.maxPlayersDefault" #maxPlayers="ngModel" id='maxplayers'>
+                        <span *ngIf="maxPlayers.invalid" class="w3-red">1-100 players</span>  
+                    </div>
+                    <!--
+                    <div class="w3-rest">
+                        <label for="buyin">Rebuys</label>
+                        <input class="w3-input w3-border form-control" name="rebuys" type="number" value="0"
+                            min="0" required [(ngModel)]="this.reBuys" id='rebuys'>
+                    </div>
+                    -->
+                </div>
                 <div class="w3-row">
-                    <input class="w3-radio form-control" type="radio" value="cash" name="eventType"
-                        [(ngModel)]="eventType" ngModel>
+                    <input class="w3-radio form-control" type="radio" value="Cash" name="eventType"
+                        [(ngModel)]="eventType" ngModel required>
                     &nbsp;<label>Cash</label>
                 </div>
                 <div class="w3-row">
                     <div class="w3-col s4 m4 l4">
-                        <input class="w3-radio form-control" type="radio" value="other" name="eventType"
-                            [(ngModel)]="eventType" ngModel>
+                        <input class="w3-radio form-control" type="radio" value="Other" name="eventType"
+                            [(ngModel)]="eventType" ngModel required>
                         &nbsp;<label>Other</label>
                     </div>
-                    <div class="w3-rest" [hidden]="eventType!='other'">
-                        <input class="w3-input w3-border form-control" name="otherDesc" type="text" ngModel>
+                    <div class="w3-rest" *ngIf="eventType=='Other'">
+                        <input class="w3-input w3-border form-control" name="otherDesc" type="text" required ngModel
+                            #otherDesc>
                     </div>
                 </div>
             </div>
-            <button type="submit" class="w3-button w3-block w3-section w3-button w3-theme w3-ripple w3-padding">Add
-                Event</button>
+            <button type="submit" class="w3-button w3-block w3-section w3-button w3-theme w3-ripple w3-padding"
+                [disabled]="!event.valid">Add Event</button>
         </form>
     </div>
 
