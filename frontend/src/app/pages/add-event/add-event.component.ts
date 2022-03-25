@@ -1,6 +1,8 @@
 import { Component, OnInit, ElementRef } from '@angular/core';
 import * as moment from 'moment';
 import { EventsService } from 'src/app/events.service';
+import Event from "../../models/events";
+import { EventsComponent } from '../events/events.component';
 
 @Component({
   selector: 'app-add-event',
@@ -19,10 +21,12 @@ export class AddEventComponent implements OnInit {
   reBuysDefault="0";
   maxPlayersDefault="10";
   addEvent!: HTMLElement;
-
+  events: Event[]=[];
+  futureEvents: Event[]=[];
 
   constructor(private el: ElementRef,
-    private eventService: EventsService) { }
+    private eventService: EventsService,
+    private EC: EventsComponent) { }
 
   ngOnInit(): void {
     this.addEvent = this.el.nativeElement.querySelector("#addEvent");
@@ -50,7 +54,14 @@ export class AddEventComponent implements OnInit {
         formVals.eventType.value,
         formVals.eventTime.value,
         formVals.eventDate.value,
-        otherDesc);
+        otherDesc,
+        formVals.buyin.value,
+        formVals.rebuys.value,
+        formVals.maxplayers.value,"0")
+        .subscribe((events) => {
+          console.log("events after subscribe ",events);
+          this.EC.updateEvents(events);
+        });
     }
     this.hideAddEvent();
   }

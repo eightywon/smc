@@ -11,7 +11,7 @@
         <!-- Profile -->
   
         <!-- Events -->
-        <app-events-summary></app-events-summary>
+        <app-events-summary *ngIf="router.url != '/main/events'"></app-events-summary>
         <br>
         <!-- Events -->
 

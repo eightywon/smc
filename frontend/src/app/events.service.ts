@@ -24,21 +24,39 @@ export class EventsService {
     eventType: string,
     eventTime: string,
     eventDate: string,
-    eventOtherDesc: string) {
+    eventOtherDesc: string,
+    eventBuyin: string,
+    eventRebuys: string,
+    eventMaxregs: string,
+    eventCurrentRegs: string) {
     
     var tmpJson = {
       "eventDescription": eventDescription,
       "eventCreatedByUserId": eventCreatedByUserId,
       "eventType": eventType,
       "eventDateTime": moment(eventDate+' '+eventTime+":00").utc(),
-      "eventOtherDesc": eventOtherDesc
+      "eventOtherDesc": eventOtherDesc,
+      "eventBuyin": eventBuyin,
+      "eventRebuys": eventRebuys,
+      "eventMaxregs": eventMaxregs,
+      "eventCurrentRegs": eventCurrentRegs
     };
     console.log("adding event events.service ",tmpJson);
-    return this.http.post<Event[]>(`${this.ROOT_URL}/addEvent`, tmpJson).subscribe(res=>console.log(res));
+    return this.http.post<Event[]>(`${this.ROOT_URL}/addEvent`, tmpJson);
   }
 
   deleteEvent(id: string) {
     console.log("deleteEvent from service ",id);
-    return this.http.delete<Event[]>(`${this.ROOT_URL}/events/${id}`).subscribe(res=>console.log(res));
+    return this.http.delete<Event[]>(`${this.ROOT_URL}/events/${id}`);
+  }
+
+  updateRegistration(eventId: string, userId: string, newStatus: boolean) {
+    var tmpJson = {
+      "eventId": eventId,
+      "userId": userId,
+      "newStatus": newStatus
+    };
+    console.log("user",userId," updating reg for event",eventId,"to",newStatus);
+    return this.http.patch<Event[]>(`${this.ROOT_URL}/updateRegistration/${eventId}`,tmpJson)
   }
 }

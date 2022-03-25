@@ -1,26 +1,28 @@
 <div class="w3-container w3-display-container" style="margin-top:-15px;" *ngIf="this.user && this.user.isAdmin">
     <div class="w3-row w3-quarter">
-        <button class="w3-button w3-block w3-section w3-button w3-theme w3-ripple" (click)="showAddEvent()">Add
+        <button class="w3-button w3-btn w3-block w3-section w3-button w3-deep-orange w3-ripple" (click)="showAddEvent()">Add an
             Event</button>
     </div>
 </div>
 
-<div style="margin-top: -15px;">
-    <div class="w3-container w3-display-container w3-card w3-white w3-round w3-margin"
-        *ngFor="let event of futureEvents">
-        <span class="w3-button w3-display-topright" (click)="deleteEvent(event._id)">
-            <i class="fa fa-remove"></i>
-        </span>
-        <p class="w3-block w3-section w3-theme"><strong>{{ moment(event.eventDateTime).local().format("ddd M/D/YYYY @
+<div class="w3-padding">
+    <header class="w3-margin-bottom"><h2>Upcoming Events:</h2></header>
+    <div class="w3-card-4 w3-white w3-display-container" *ngFor="let event of futureEvents" style="margin-bottom:40px;">
+        <header class="w3-theme w3-container w3-padding"><strong>{{ moment(event.eventDateTime).local().format("ddd
+                M/D/YYYY @
                 h:mmA") }} - {{ event.eventType }}
-                <span *ngIf="event.eventOtherDesc!=''">: {{ event.eventOtherDesc }}</span></strong></p>
-        <p>{{ moment(event.eventDateTime).fromNow() }}</p>
-        <div class="w3-rest">
-            <p>{{event.eventDescription}}</p>
+                <span *ngIf="event.eventOtherDesc!=''">: {{ event.eventOtherDesc }}</span></strong> (...{{
+            moment(event.eventDateTime).fromNow() }})<span class="w3-right">Regs: {{event.eventCurrentRegs}}/{{event.eventMaxRegs}}</span></header>
+        <div class="w3-container" style="padding-bottom: 60px;">
+            {{event.eventDescription}}
         </div>
-        <div class="w3-row w3-right w3-padding"><button
-                class="w3-button w3-block w3-section w3-button w3-theme w3-ripple">Register</button></div>
+        <div class="w3-container w3-row w3-display-bottomright w3-padding">
+            <button class="w3-button w3-theme w3-ripple w3-small" (click)="updateRegistration(event._id)">Register</button>&nbsp;
+            <button *ngIf="this.user && this.user.isAdmin" class="w3-button w3-theme w3-ripple w3-small"
+                (click)="deleteEvent(event._id)">Cancel Event</button>
+        </div>
     </div>
 </div>
 
 <app-add-event></app-add-event>
+<app-confirm-registration></app-confirm-registration>

@@ -16,6 +16,7 @@ const multer = require('multer');
 const path = require('path');
 const Event = require("./database/models/events");
 const socketServer = https.createServer(sslCreds, app);
+const moment = require("moment");
 
 const { Server } = require("socket.io");
 const io = new Server(socketServer, {
@@ -41,6 +42,7 @@ app.post("/regsms", function (req, res) {
   twilio.messages.create({
     body: req.body.message,
     from: '+12107746873',
+    //from: '+12192294610',
     to: '1' + req.body.cell
   })
     .then(message => {
@@ -460,7 +462,7 @@ app.patch("/addReply/:_id", (req, res) => {
 
 //socketio shit
 io.on('connection', (socket) => {
-  console.log('a user connected ', socket.id);
+  console.log(moment().local().format('MM/DD/yyyy@H:mm:ss: '), 'a user connected ', socket.id, "("+socket.handshake.address+")");
 
   /*
   socket.on("getDoc", docId => {
@@ -496,26 +498,40 @@ app.get("/events", verifyToken, (req, res) => {
 });
 
 app.post("/addEvent", (req, res) => {
-  console.log("adding event, ",req.body);
+  console.log("adding event, ", req.body);
   (new Event({
     'eventDescription': req.body.eventDescription,
     'eventCreatedByUserId': req.body.eventCreatedByUserId,
     'creationDate': new Date(),
     'eventType': req.body.eventType,
     'eventDateTime': req.body.eventDateTime,
-    'eventOtherDesc': req.body.eventOtherDesc
+    'eventOtherDesc': req.body.eventOtherDesc,
+    'eventBuyin': req.body.eventBuyin,
+    'eventRebuys': req.body.eventRebuys,
+    'eventMaxRegs': req.body.eventMaxregs,
+    'eventCurrentRegs': req.body.eventCurrentRegs
   }))
     .save()
-    .then(function (event) {
-      res.send(event);
-      console.log("add event: ",event);
-
+    .then(function () {
+      Event.find({})
+        .then(function (events) {
+          //io.emit("postCollection", agg);
+          //console.log(agg);
+          res.send(events);
+        })
     })
 });
 
 app.delete("/events/:_id", (req, res) => {
-  console.log("del event ",req.params._id);
+  console.log("del event ", req.params._id);
   Event.findOneAndDelete({ "_id": req.params._id })
-    .then(event => res.send(event))
+    .then(function () {
+      Event.find({})
+        .then(function (events) {
+          //io.emit("postCollection", agg);
+          //console.log(agg);
+          res.send(events);
+        })
+    })
     .catch((error) => console.log(error));
 });

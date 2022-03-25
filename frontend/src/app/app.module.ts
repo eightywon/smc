@@ -18,6 +18,7 @@ import { MainComponent } from './pages/main/main.component';
 import { EventsSummaryComponent } from './pages/events-summary/events-summary.component';
 import { ProfileComponent } from './pages/profile/profile.component';
 import { AddEventComponent } from './pages/add-event/add-event.component';
+import { ConfirmRegistrationComponent } from './pages/confirm-registration/confirm-registration.component';
 
 const config: SocketIoConfig = { url: 'https://smokingmonkey.club:4444', options: {} };
 
@@ -34,6 +35,7 @@ const config: SocketIoConfig = { url: 'https://smokingmonkey.club:4444', options
     EventsSummaryComponent,
     ProfileComponent,
     AddEventComponent,
+    ConfirmRegistrationComponent,
   ],
   imports: [
     BrowserModule,

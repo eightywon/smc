@@ -25,7 +25,55 @@ const EventSchema = new mongoose.Schema({
     eventOtherDesc: {
         type: String,
         trim: true
-    }
+    },
+    eventBuyin: {
+        type: String,
+        trim: true
+    },
+    eventRebuys: {
+        type: String,
+        trim: true
+    },
+    eventMaxRegs: {
+        type: String,
+        trim: true
+    },
+    eventCurrentRegs: {
+        type: String,
+        trim: true
+    },
+    registrations: [{
+        postText: {
+            type: String,
+            trim: true,
+        },
+        regUserId: {
+            type: mongoose.Types.ObjectId,
+            required: true,
+        },
+        regDate: {
+            type: Date,
+            required: true
+        },
+        eventId: {
+            type: mongoose.Types.ObjectId,
+            required: true
+        },
+        displayName: {
+            type: String,
+            trim: true,
+        },
+        receiveSMSAlerts: {
+            type: Boolean,
+            default: true
+        },
+        receiveEmailAlerts: {
+            type: Boolean,
+            default: true
+        },
+    }]
+
+
 });
 
 const Event = mongoose.model("Events", EventSchema);

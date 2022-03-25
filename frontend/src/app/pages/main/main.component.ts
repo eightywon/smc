@@ -29,7 +29,7 @@ export class MainComponent implements OnInit {
 
   constructor(private postService: PostService,
     private el: ElementRef,
-    private router: Router,
+    public router: Router,
     private userService: UserService,
     private socket: Socket) { }
 
